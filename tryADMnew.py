@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-
+'''
+Problem:
+in adMatrix finden sich Zeilen mit weniger als 20 Einträgen.
+Es könnte aber in der Natur des Problems oder der Lösung liegen, dass nicht alle Personen 20 Kontakte haben können
+'''
 
 import numpy as np
 
@@ -13,6 +17,10 @@ adMatrix = np.zeros((N, N), dtype=bool)    # matrix which shows social contacts
 
 def indexfilter_2(matrix, row):
     hv = np.where(np.sum(matrix[:,row+1:N], axis=0) < k)
+    '''
+    Ich glaube das kann nicht stimmen, da die Hälfte der kontakte nicht beachtet werden. 
+    Reihe 0-20 kann mit dem Code ja die maximale Summe nicht erreichen, und so immer in potCon sein.
+    '''
     potCon = hv[0] + (row + 1)
     return potCon
     
