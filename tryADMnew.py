@@ -9,7 +9,12 @@ if (np.sum(adMatrix, axis=0) < k).any():
 spuckt keinen Fehler aus, aber 
 adMatrix.sum()-(5000*20) > 0
 also müssten es wieder zu wenige Kontakte sein???
+
+Ich denke dass der erste Code vllt doch richtig war, bemerkenswerter Weise waren die Fehler immer in den letzten Zeilen:
+Es könnte sein, dass das "Rätsel" wie die Kontakte zu verteilen sind, am Ende nicht auflösbar ist und deshalb einige Felder leer bleiben
 '''
+
+#Code wegen ewigen Loops noch nie ausgeführt
 
 import numpy as np
 
@@ -26,8 +31,12 @@ adMatrix = np.zeros((N, N), dtype=bool)    # matrix which shows social contacts
 
 def indexfilter_3(row, matrix=adMatrix):
     #Da wir soweit mit einer Dreiecksmatrix arbeiten, gibt uns das ein array aller möglichen Personen in Kontakt mit der Zeile mit "False"
-    potCon = np.concatenate(( np.where(matrix[:row,row] == False)[0], (np.where(matrix[row,row+1:] == False)[0] + row+1) ))
+    potCon_f = np.concatenate(( np.where(matrix[:row,row] == False)[0], (np.where(matrix[row,row+1:] == False)[0] + row+1) ))
     #was ist mit der ersten und letzten Zeile? -> scheint zu funktionieren
+    potCon = []
+    for x in potCon_f:   #Das kann  man sicher schöner machen, ich steh auf dem Schlauch, dieser Loop dauert 15min aufwärts
+        if  (matrix[:x,x].sum() + matrix[x,x+1:].sum()) < k:
+            potCon.append(x)
     return potCon
 
     
@@ -45,27 +54,8 @@ if (np.sum(adMatrix, axis=0) < k).any():
     print("Achtung: in adMatrix gibt Personen mit weniger als k Kontakten")
         
 
-np.save('adMatrix_Mat.npy', adMatrix)   # saves adMatrix
+np.save('adMatrix_Mat2.npy', adMatrix)   # saves adMatrix
 #np.load('adMatrix.npy')             # loads adMatrix    
-
-
-'''
-Programm dauert bei mir nur Sekunden
-'''
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
 
 
 
