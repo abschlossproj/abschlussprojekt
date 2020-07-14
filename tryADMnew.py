@@ -16,12 +16,14 @@ adMatrix = np.zeros((N, N), dtype=bool)    # matrix which shows social contacts
 
 
 def indexfilter_2(matrix, row):
-    hv = np.where(np.sum(matrix[:,row+1:N], axis=0) < k)
+    #hv = np.where(np.sum(matrix[:,row+1:N], axis=0) < k)
     '''
     Ich glaube das kann nicht stimmen, da die Hälfte der kontakte nicht beachtet werden. 
     Reihe 0-20 kann mit dem Code ja die maximale Summe nicht erreichen, und so immer in potCon sein.
     '''
-    potCon = hv[0] + (row + 1)
+    hv = np.where(np.sum(matrix, axis=0) < k)[0]
+    ind = hv != row
+    potCon = hv[ind]
     return potCon
     
 
@@ -42,7 +44,9 @@ np.save('adMatrix_2.npy', adMatrix)   # saves adMatrix
         
 '''
 Code braucht bei mir, Matthias: 
-2:10
+ca. 4min
+
+funktioniert ähnlich schlecht wie vorher, mit bei einem Versuch, wo eine Zeile falsch war
 
 '''
 
