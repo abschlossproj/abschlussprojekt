@@ -28,45 +28,15 @@ for i in np.arange(N):    # loop for every row
         adMatrix[indizes, i] = True   # transpose the matrix
         
 
-np.save('adMatrix.npy', adMatrix)   # saves adMatrix
+np.save('adMatrix_2.npy', adMatrix)   # saves adMatrix
 #np.load('adMatrix.npy')             # loads adMatrix
 
         
-            
+'''
+Code braucht bei mir, Matthias: 
+2:10
 
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+'''
 
 
 
