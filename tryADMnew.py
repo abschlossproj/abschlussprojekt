@@ -30,14 +30,17 @@ for i in np.arange(N):    # loop for every row
         newCon = min(addCon, len(potCon))  # new social contacts     ## HIER WAR FEHLER IN ANGABE K MUSS DURCH addCon ERSETZT WERDEN
         indizes = np.random.choice(potCon, newCon, replace=False)   # chooses random indices out of potential indices
         adMatrix[i, indizes] = True   # obere Dreiecksmatrix der Kontakte
+if (np.sum(adMatrix, axis=0) < k).any():
+    print("Achtung: in adMatrix gibt Personen mit weniger als k Kontakten")
         adMatrix[indizes, i] = True   # um die Matrix symmetrisch zu machen
         
 
 '''
-In der adMatrix.npy hat (array([4983, 4998]),) weniger als k Einträge
+In der adMatrix.npy hat (array([4983, 4998]),) weniger als k Einträge (mehr als k Einträge kein Problem)
 Gleiches Problem bei kleineren k und N
 Statt Debugging kleiner Workaround:
 '''
+
 
 if (np.sum(adMatrix, axis=0) != k).any():
     print("Achtung: in adMatrix gibt es Zeilensummen ungleich k. Workaround...")
@@ -60,6 +63,10 @@ if (np.sum(adMatrix, axis=0) != k).any():
         print("Workaround erfolgreich, adMatrix vollständig")
 else:
     print("In adMatrix sind alle Zeilensummen gleich k")
+
+
+#Workaround klappt auch nicht
+
 
 #print(adMatrix)                      #for testing, also change N
 #np.save('adMatrix_Mat.npy', adMatrix)   # saves adMatrix
