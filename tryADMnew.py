@@ -4,8 +4,8 @@
 import numpy as np
 
 
-N = 10 #5000 for testing less  # populationsize 
-k = 3 #20 for testing less    # figure of social interactions per day per person
+N = 1000 #5000 for testing less  # populationsize 
+k = 6 #20 for testing less    # figure of social interactions per day per person
 # unterschiedliche Szenarien sollen gerechnet werden. Vorschlag: k=5,10,20 -> eine große Schleife?
 
 adMatrix = np.zeros((N, N), dtype=bool)    # matrix which shows social contacts
@@ -13,16 +13,16 @@ adMatrix = np.zeros((N, N), dtype=bool)    # matrix which shows social contacts
 
 # Berechne einen Indexfilter für mögliche Kontakte in der jeweiligen Zeile
 # Nur jene Indizes sind erlaubt, deren Spaltensumme kleiner k beträgt
-def indexfilter_2(matrix, row):
-    # Gibt ein array mit den Personen aus, die weniger als k Kontakte hatten:
-    hv = np.where(np.sum(matrix[:,row+1:N], axis=0) < k)
 
-    potCon = hv[0] + (row + 1) #array aller möglichen Personen, die infiziert werden könnten
+def indexfilter_3(row, matrix=adMatrix):
+    #Da wir soweit mit einer Dreiecksmatrix arbeiten, gibt uns das ein array aller möglichen Personen in Kontakt mit der Zeile mit "False"
+    potCon = np.concatenate(( np.where(matrix[:row,row] == False)[0], (np.where(matrix[row,row+1:] == False)[0] + row+1) ))
+    #was ist mit der ersten und letzten Zeile? -> scheint zu funktionieren
     return potCon
 
     
 for i in np.arange(N):    # loop for every row
-    potCon = indexfilter_2(adMatrix, i)    # list with potentional new contacs per row
+    potCon = indexfilter_2(i)    # list with potentional new contacs per row
     addCon = k - adMatrix[i,].sum()      # additional contacs for k entries in a row  
     
 # Durch eine ungünstige Abfolge des Matrix Aufbaus, kann die Situation entstehen, dass nicht in jeder Zeile exakt k Kontakte möglich sind.
@@ -30,21 +30,23 @@ for i in np.arange(N):    # loop for every row
         newCon = min(addCon, len(potCon))  # new social contacts     ## HIER WAR FEHLER IN ANGABE K MUSS DURCH addCon ERSETZT WERDEN
         indizes = np.random.choice(potCon, newCon, replace=False)   # chooses random indices out of potential indices
         adMatrix[i, indizes] = True   # obere Dreiecksmatrix der Kontakte
+        #adMatrix[indizes, i] = True   # um die Matrix symmetrisch zu machen
+
 if (np.sum(adMatrix, axis=0) < k).any():
     print("Achtung: in adMatrix gibt Personen mit weniger als k Kontakten")
-        adMatrix[indizes, i] = True   # um die Matrix symmetrisch zu machen
         
 
 '''
 In der adMatrix.npy hat (array([4983, 4998]),) weniger als k Einträge (mehr als k Einträge kein Problem)
-Gleiches Problem bei kleineren k und N
+Gleiches Problem bei kleineren k und N, Fehler taucht öfters auf
 Statt Debugging kleiner Workaround:
 '''
 
+''' Workaround klappt noch nicht
 
 if (np.sum(adMatrix, axis=0) != k).any():
     print("Achtung: in adMatrix gibt es Zeilensummen ungleich k. Workaround...")
-####################################################################
+########## Code von oben, klappt auch nicht########################
     potCon = indexfilter_2(adMatrix, i)    # list with potentional new contacs per row
     addCon = k - adMatrix[i,].sum()      # additional contacs for k entries in a row  
 
@@ -65,7 +67,7 @@ else:
     print("In adMatrix sind alle Zeilensummen gleich k")
 
 
-#Workaround klappt auch nicht
+'''
 
 
 #print(adMatrix)                      #for testing, also change N
