@@ -1,0 +1,30 @@
+Meeting 06.07.2020 -- Abschlussprojekt Computational Statistics
+
+
+# Terminvorschlag Abschlussgespräch beantwortet:
+
+24.08.2020 - Ort/Zeit tba
+
+
+# grober Zeitplan:
+
+zuerst python, dann das in R übersetzen
+
+
+# Aufgabenverteilung
+
+| to-do                         | python  | R                                             |
++-------------------------------+---------+-----------------------------------------------+
+| Github                        |                    Robin als Experte                    |
++-------------------------------+---------+-----------------------------------------------+
+| adj. Matrix                   | Mat/Man | Robin                                         |
++-------------------------------+---------+-----------------------------------------------+
+| Krankheitsverlauf             | Mat/Man | Robin                                         |
++-------------------------------+---------+-----------------------------------------------+
+| Visualisierung                | Mat/Man | ggplot2 sollte in R wie python funktionieren! |
++-------------------------------+---------+-----------------------------------------------+
+| Dokumentation:                |         |                                               |
+| Matrixen/Bilder exportieren   |         |                                               |
+| Kommentieren                  |         |                                               |
+| Project-report -> als .md/.nb |         |                                               |
++-------------------------------+---------+-----------------------------------------------+
