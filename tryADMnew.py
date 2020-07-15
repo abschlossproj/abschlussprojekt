@@ -43,10 +43,17 @@ if (np.sum(adMatrix, axis=0) < k).any():
     print("Achtung: in adMatrix gibt Personen mit weniger als k Kontakten: ", np.where(np.sum(adMatrix, axis=1) != k) )
 # Durch eine ungünstige Abfolge des Matrix Aufbaus, kann die Situation entstehen, dass nicht in jeder Zeile exakt k Kontakte möglich sind.
 
+#Test, ob spurlos
+print("Die Spur der Adjazenzmatrix ist: ", adMatrix.trace())
+
 np.save('adMatrix_4.npy', adMatrix)   # saves adMatrix
 #np.load('adMatrix.npy')             # loads adMatrix    
 
-
+'''
+Ist adMatrix für alle Tage konstant, oder ändern sich die Kontakte pro Tag?
+In der Angabe steht nur "für jede Person konstant"
+-> vllt als Funktion
+'''
 
 
 
