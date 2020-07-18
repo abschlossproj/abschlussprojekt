@@ -26,9 +26,10 @@ for i in index:                     # sets predicted illness duration of ill peo
 
 
 
-t = 20      # days of simulation
+t = 25      # days of simulation
 
 documentation = pd.DataFrame({          # documention of stati for each day 
+                              "days": np.arange(t+1),
                               "H" : np.zeros(t+1),
                               "D" : np.zeros(t+1),
                               "R" : np.zeros(t+1),
@@ -67,6 +68,7 @@ for day in np.arange(t):    # loop for every day
     documentation.loc[day+1, "R"] = len(data[data["stati"] == "R"])
     documentation.loc[day+1, "T"] = len(data[data["stati"] == "T"])
     
+documentation.to_csv('documentation_simul.csv') #automatisch unterschiedliche Namen für verschiedenen Durchläufe?
     
     
     
