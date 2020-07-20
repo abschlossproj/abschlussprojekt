@@ -9,6 +9,7 @@ To-do: Legende, Titel, Theme, Farben, Beschriftung
 To-do: Abspeichern als eine daten (layout), Export mit dynamischen Namen je nach Szenario
 To-do: als Loop Input und Output Files -> same für simul_2.py, um die verschiedenen Szenarien durchlaufen zu lassen
 To-do: letzte Graphik noch skizzieren
+To-do: maybe shorten the datatables, when theres a boring "tail"
 '''
 
 #to-do: documentation Matrix aus simul_2.py abspeichern und hier laden
