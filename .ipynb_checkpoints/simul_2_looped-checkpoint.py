@@ -4,7 +4,9 @@
 
 #time it:
 import datetime
+print('Expected runtime: 11min - matthias')
 print('Start at:',datetime.datetime.now())
+print('running...')
 
 import numpy as np
 import pandas as pd
@@ -87,7 +89,8 @@ for k,m,p in P:
         documentation.loc[day+1, "R"] = len(data[data["stati"] == "R"])
         documentation.loc[day+1, "T"] = len(data[data["stati"] == "T"])
     
-    filename_permutation = ('documentation_simul_k%s_m%s_p%s.csv' %(k,m,p)).replace("0.","")
+    filename_permutation = ('documentation_simul_k%s_m%s_p%s.csv' %(k,m,int(100*p)))
+    filename_permutation = filename_permutation.replace('m1_','m01_').replace('m5_','m05_').replace('k5_','k05_')
     #######################################.############################
     documentation.to_csv(output_directory+'/'+filename_permutation) #### Compatibility?
     ###################################### ^ ###########################

@@ -14,12 +14,62 @@ To-do: maybe shorten the datatables, when theres a boring "tail"
 
 #to-do: documentation Matrix aus simul_2.py abspeichern und hier laden
 
-from plotnine import ggplot, aes, geom_line, geom_col
+from plotnine import ggplot, aes, geom_line, geom_col, facet_grid
 import pandas as pd
 import numpy as np
 import math
+import os
 
-file = 'documentation_simul.csv'
+
+########### P copied from simul Script :/ -> is it even used?
+k_l=[5,10,20]         # number of contacts, only relevant for saved adMatrix from that script
+m_l = [1,5,10]        # ill people on day 1
+p_l = [.1,.25,.5]     # infection rate
+P = []
+for k in k_l:
+    for m in m_l:
+        for p in p_l:
+            P.append((k,m,p))
+
+files = os.listdir('documentation_tables')
+docs = pd.DataFrame()
+#i=1
+for i, y in enumerate(files):
+    df = pd.read_csv(('documentation_tables' + '/' + files[i]), index_col=0) # Compatibility issues?
+    #slice the parameters of the scenario from the filename
+    df['k'] = int(y[21:23])
+    df['m'] = int(y[25:27])
+    df['p'] = int(y[29:31])
+    if len(docs)==0:
+        docs=df
+    else:
+        docs=pd.concat([docs, df], ignore_index = True)
+    #i+=1
+    #if i>1:
+    #    break
+
+        
+        
+# facet über p, k, m,mr fix
+ '''todo'''
+
+# line-graphs, die die totalen Infizierten über verschiedenen p,k vergleichen
+docm05 = docs[docs.m==5]
+g = ggplot(docm05, aes(x='days'))
+g + geom_line(aes(y='T')) + facet_grid(('k','p')) #in R not a tuple but ~
+
+
+#docs[(docs.k==20)&(docs.m==10)&(docs.p==25)]
+
+############################
+'''
+
+Below was before simul got looped
+
+'''
+###########################
+
+file = files[4] #random, choose later on a 'nice' one
 
 doc = pd.read_csv(file , index_col=0)
 
@@ -108,7 +158,5 @@ Das vielleicht gegen ein Barplot der gestacked die Toten, Gesunden und Resistent
 '''
 Notizen vom 20.07:
 Grafiken:
-facet über p, k, m,mr fix
-line-graphs, die die totalen Infizierten über verschiedenen p,k vergleichen
 rote Column negativ: Tote/Tag, grüne positiv: Genesungen pro Tag, gelbe Transparent dahinter: Neuinfektionen, Linie: entweder D oder cumD
 '''
