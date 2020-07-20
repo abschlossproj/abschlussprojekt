@@ -5,19 +5,20 @@ pip install plotnine
 
 https://plotnine.readthedocs.io/en/stable/index.html
 
-To-do: Legende, Titel, Farben, Beschriftung, Export
-
-vllt. log Darstellung nur Kranker und Toter
-Darstellung neuer Infektionen und Toter insgesamt
+To-do: Legende, Titel, Theme, Farben, Beschriftung
+To-do: Abspeichern als eine daten (layout), Export mit dynamischen Namen je nach Szenario
+To-do: als Loop Input und Output Files -> same für simul_2.py, um die verschiedenen Szenarien durchlaufen zu lassen
+To-do: letzte Graphik noch skizzieren
 '''
 
 #to-do: documentation Matrix aus simul_2.py abspeichern und hier laden
 
 from plotnine import ggplot, aes, geom_line, geom_col
 import pandas as pd
+import numpy as np
 import math
 
-file = '/home/matthias/Documents/Wien/Statistik/2020_SoSe/CompStat_SS20/alt_und_meins/meins/UE4/abschlussprojekt/documentation_simul.csv'
+file = 'documentation_simul.csv'
 
 doc = pd.read_csv(file , index_col=0)
 
@@ -72,16 +73,41 @@ for i in np.arange(len(doc)-1)+1:
     D_nw.append(doc.loc[i-1,"H"]-doc.loc[i,"H"])
     R_nw.append(doc.loc[i,"R"]-doc.loc[i-1,"R"])
     T_nw.append(doc.loc[i,"T"]-doc.loc[i-1,"T"])
-doc_change = pd.DataFrame({'D_change': D_chng, 
+doc_change = pd.DataFrame({'D': doc.loc[1:25,"D"],
+                           'G': np.add(doc.loc[1:25,"H"],doc.loc[1:25,"R"]), #Genesene+Healthy
+                           'D_change': D_chng, 
                            'D_new' :D_nw, 
+                           'R_new':R_nw,
                            'days':doc.loc[1:25,'days'], 
                            'T':doc.loc[1:25,"T"],
-                           'sgR_new': (R_nw > T_nw)}) #zeigt an, ob die Verringerung Kranker eher wegen Todes oder Genesungen kommt
+                           'T_new':np.multiply(-1, T_nw),
+                           'sgR_new': (R_nw > T_nw),
+                           'sgD_change': np.sign(D_chng), #zeigt an, ob die Verringerung Kranker eher wegen Todes oder Genesungen kommt
+                           'cumT':np.add(R_nw,T_nw)}) 
 ggplot(doc_change, aes(x='days'))  \
-    + geom_col(aes(y="T"),color='red') \
-    + geom_col(aes(y="D_change", col='sgR_new')) \
-    + geom_line(aes(y="D_new"))
+    + geom_col(aes(y="cumT"),fill='red',width=.6) \
+    + geom_col(aes(y="D_new",alpha=.5)) \
+    + geom_col(aes(y="R_new",width=.6,fill='sgD_change')) \
+    + geom_line(aes(y='G'))
     #+ geom_line(aes(y="D_change"))
-     
+    #+ geom_col(aes(y="D_change", col='sgR_new')) #<-könnte später interessant werden, wenn in Simulationen die Ansteckungsraten langsamer sind, also sich D ändert, weil Leute sterben (-), genesen (-) und sich anstecken (+) 
+doc_change.sgR_new
+
+
+'''
+Welche Veränderungen sind wichtig?
+Wie viele Leute sterben?
+Wie viele Leute stecken sich täglich an?
+Wie viele Leute genesen?
+
+Das vielleicht gegen ein Barplot der gestacked die Toten, Gesunden und Resistenten anzeigt
+
+'''
     
-    
+'''
+Notizen vom 20.07:
+Grafiken:
+facet über p, k, m,mr fix
+line-graphs, die die totalen Infizierten über verschiedenen p,k vergleichen
+rote Column negativ: Tote/Tag, grüne positiv: Genesungen pro Tag, gelbe Transparent dahinter: Neuinfektionen, Linie: entweder D oder cumD
+'''

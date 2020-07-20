@@ -26,7 +26,7 @@ for i in index:                     # sets predicted illness duration of ill peo
 
 
 
-t = 25      # days of simulation
+t = 25      # days of simulation # -> dynamisch definieren, zB sobald D zweimal hintereinander 0 ist -> while/break
 
 documentation = pd.DataFrame({          # documention of stati for each day 
                               "days": np.arange(t+1),
