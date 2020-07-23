@@ -21,8 +21,7 @@ data["stati"] = 'H'     # sets health status on H
 # choose #m ill people on day 1 randomly
 index = np.random.choice(N, m)
 data.loc[index, "stati"] = 'D'
-for i in index:                     # sets predicted illness duration of ill people on day 1 
-    data.loc[i, "dur"] = np.random.randint(10, 16)
+data.loc[index, "dur"] = [np.random.randint(10, 16) for i in index]     # sets predicted illness duration of ill people on day 1 
 
 
 
@@ -59,8 +58,7 @@ for day in np.arange(t):    # loop for every day
                 newInf.append(j)  
                 
     data.loc[newInf, "stati"] = 'D'     # status update new infections
-    for i in newInf:
-        data.loc[i, "dur"] = np.random.randint(10,16)   # sets predicted illness duration of new infections
+    data.loc[newInf, "dur"] = [np.random.randint(10, 16) for i in newInf]   # sets predicted illness duration of new infections
     
     # update the documentation
     documentation.loc[day+1, "H"] = len(data[data["stati"] == 'H'])
