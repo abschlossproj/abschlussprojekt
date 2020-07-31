@@ -57,7 +57,7 @@ vielleicht über einen Loop alle drei M in einer grafik darstellen
 # facet über p, k, m,mr fix
 docm05 = docs[docs.m==5]
 g = ggplot(docm05, aes(x='days'))
-g + geom_line(aes(y='T')) + facet_grid(('k','p')) #in R not a tuple but ~
+g + geom_line(aes(y='T'))  + facet_grid(('k','p')) #in R not a tuple but ~
 # interesting: for (20,50) there's less deads in total than vor (10,25)
 
 
@@ -94,9 +94,9 @@ Below was before simul got looped
 
 '''
 
-file = files[4] #random, choose later on a 'nice' one
+file = files[1] #random, choose later on a 'nice' one #4 normally good choice
 
-doc = pd.read_csv(file , index_col=0)
+doc = pd.read_csv('documentation_tables/' +file , index_col=0) #####################Fehler
 
 # Zeit vs Anzahl HDTR
 ggplot(doc, aes(x='days'))   + geom_line(aes(y='H')) \
@@ -153,9 +153,9 @@ for i in np.arange(len(doc)-1)+1:
     R_nw.append(doc.loc[i,"R"]-doc.loc[i-1,"R"])
     T_nw.append(doc.loc[i,"T"]-doc.loc[i-1,"T"])
     
-doc_change = pd.DataFrame({'H': doc.loc[1:25,'H'],
-                           'D': doc.loc[1:25,"D"],
-                           'G': np.add(doc.loc[1:25,"H"],doc.loc[1:25,"R"]), #Genesene+Healthy
+doc_change = pd.DataFrame({'H': doc.loc[1:38,'H'], #normally 25 -> bug
+                           'D': doc.loc[1:38,"D"],
+                           'G': np.add(doc.loc[1:38,"H"],doc.loc[1:38,"R"]), #Genesene+Healthy
                            'D_change': D_chng, 
                            'D_new' :D_nw,
                            'D_new_c': np.add(np.add(R_nw,T_nw),D_nw),
@@ -163,8 +163,8 @@ doc_change = pd.DataFrame({'H': doc.loc[1:25,'H'],
                            'R_new':R_nw,
                            'R_new_c':np.add(R_nw,T_nw),
                            'R_new_neg': np.negative(R_nw),
-                           'days':doc.loc[1:25,'days'], 
-                           'T':doc.loc[1:25,"T"],
+                           'days':doc.loc[1:38,'days'], 
+                           'T':doc.loc[1:38,"T"],
                            'T_new':np.multiply(-1, T_nw),
                            'T_new_pos':T_nw,
                            'T_new_log': (np.log10(list(map(log10, T_nw)))),
@@ -177,7 +177,7 @@ ggplot(doc_change, aes(x='days'))  \
     + geom_line(aes(y='G'))
     #+ geom_line(aes(y="D_change"))
     #+ geom_col(aes(y="D_change", col='sgR_new')) #<-könnte später interessant werden, wenn in Simulationen die Ansteckungsraten langsamer sind, also sich D ändert, weil Leute sterben (-), genesen (-) und sich anstecken (+) 
-doc_change.sgR_new
+doc_change.sgR_new ###### BUG
 
 
     #+ geom_line(aes(y="G",fill='3')) \
