@@ -69,6 +69,7 @@ def scenario(k,m,p):
 
 
     documentation = pd.DataFrame({          # documention of stati, people in isolation, course of disease for each day 
+                                  "days": np.arange(t+1),
                                   "H" : np.zeros(t+1),
                                   "D" : np.zeros(t+1),
                                   "R" : np.zeros(t+1),
