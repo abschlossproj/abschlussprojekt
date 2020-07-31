@@ -6,10 +6,10 @@ pip install plotnine
 https://plotnine.readthedocs.io/en/stable/index.html
 
 To-do: Legende, Titel, Theme, Farben, Beschriftung
-To-do: Abspeichern als eine daten (layout), Export mit dynamischen Namen je nach Szenario
-To-do: als Loop Input und Output Files -> same für simul_2.py, um die verschiedenen Szenarien durchlaufen zu lassen
-To-do: letzte Graphik noch skizzieren
-To-do: maybe shorten the datatables, when theres a boring "tail"
+To-do: Abspeichern
+to-do: mehrere m's mit layout abspeichern
+
+geom_line häufig problematisch, wenn es statt vieler lines nur eine ausspuckt, die alles verscuht zu kombinieren -> geom_line(aes(group = Subject ))
 '''
 
 #to-do: documentation Matrix aus simul_2.py abspeichern und hier laden
@@ -30,6 +30,7 @@ for k in k_l:
     for m in m_l:
         for p in p_l:
             P.append((k,m,p))
+############
 
 files = os.listdir('documentation_tables')
 docs = pd.DataFrame()
@@ -43,13 +44,16 @@ for x, y in enumerate(files):
     if len(docs)==0:
         docs=df
     else:
-        docs=pd.concat([docs, df], ignore_index = True)
+        docs=pd.concat([docs, df], ignore_index = True) #to get an index with length 27*38
     #i+=1
     #if i>1:
     #    break
 
         
-        
+'''
+to-do
+vielleicht über einen Loop alle drei M in einer grafik darstellen
+'''
 # facet über p, k, m,mr fix
 docm05 = docs[docs.m==5]
 g = ggplot(docm05, aes(x='days'))
@@ -83,15 +87,12 @@ docm05k20 = df[df.k == 20][['days','D','p']]
 
 .pivot( columns='D',values=['k','p'])
 docm05wide = docm05.pivot(columns='p')
-
 '''
-############################
 '''
 
 Below was before simul got looped
 
 '''
-###########################
 
 file = files[4] #random, choose later on a 'nice' one
 
@@ -139,6 +140,7 @@ def log10(x):
 doc_logT = doc['T'].apply(lambda x: math.log(log10(x),10)) #sehr langsam :/
 doc_logD = doc['D'].apply(lambda x: math.log(log10(x),10)) # -> np.log(x) (geht auch mit df/ser?!)
 doc_logDT = pd.DataFrame((doc['days'], doc_logT, doc_logD)).T
+
 ggplot(doc_logDT, aes(x='days'))   + geom_line(aes(y="D")) \
                              + geom_line(aes(y="T"))
 
@@ -176,33 +178,6 @@ ggplot(doc_change, aes(x='days'))  \
     #+ geom_line(aes(y="D_change"))
     #+ geom_col(aes(y="D_change", col='sgR_new')) #<-könnte später interessant werden, wenn in Simulationen die Ansteckungsraten langsamer sind, also sich D ändert, weil Leute sterben (-), genesen (-) und sich anstecken (+) 
 doc_change.sgR_new
-
-
-'''
-Welche Veränderungen sind wichtig?
-Wie viele Leute sterben?
-Wie viele Leute stecken sich täglich an?
-Wie viele Leute genesen?
-
-Das vielleicht gegen ein Barplot der gestacked die Toten, Gesunden und Resistenten anzeigt
-
-'''
-    
-'''
-Notizen vom 20.07:
-Grafiken:
-rote Column negativ: Tote/Tag, grüne positiv: Genesungen pro Tag, gelbe Transparent dahinter: Neuinfektionen, Linie: entweder D oder cumD
-'''
-
-'''
-alles als bar:
-cumR
-healthy
-}sodass die ein overlay bilden
--D_new
--T_new
--R_new
-'''
 
 
     #+ geom_line(aes(y="G",fill='3')) \
