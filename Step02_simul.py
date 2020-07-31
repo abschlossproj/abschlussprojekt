@@ -1,22 +1,44 @@
-# -*- coding: utf-8 -*-
+'''
+-*- coding: utf-8 -*-
+This script should be run after Step01, the creation of the ad.matrix
+In this file\'s directory needs to be adMatrix_k*.npy'
+It then calculates all suggested scenarios with the given number of contacts, and freely choosable number of patient 0s and probability of infection
 
+Expected runtime: 11min - matthias@matthias'
+'''
 import numpy as np
 import pandas as pd
 import datetime
 import os
-import itertools
-import threading
-import time
-import sys
+import itertools #loading animation
+import threading #loading animation
+import sys #loading animation
+import time #loading animation
 
-finish = False
+##### FOR TESTING, SET t
+#t = int(input('Set t'))
+
+# Global variables
+t = 105                         # simulation period (days) -> with 105 for every k,m,p all changes documented
+N = 5000                        # populationsize from Step01
+mr = 0.05                       # mortality rate
+x = 5                           # quarantine after x days
+pCD = [80/100, 15/100, 5/100]   # probability vector to set course of disease
+tmin=10; tmax=16                # Duration of sickness
+output_directory = "documentation_tables"
+if not os.path.exists(output_directory) or not output_directory in os.listdir():
+    os.mkdir(output_directory)  
+done = False #loading animation
+
+#loading animation
 def loadingicon():
-    for c in itertools.cycle(['|', '/', '-', '\\']):
-        if finish:
+    for symb in itertools.cycle(['\\','|', '/', '-']):
+        if done:
             break
-        sys.stdout.write('\rrunning ' + c)
-        sys.stdout.flush()
+        sys.stdout.write('\rsimulating scenario ' + symb)
+        sys.stdout.flush() #to see the new spinning symbol at once, not after the loop's finished
         time.sleep(0.1)
+
 
 def diseasecourse():        # sets course of disease    # L=leicht, M=Mittel, S=Schwer 
     hv = np.nonzero(np.random.multinomial(1, pCD))[0]
@@ -27,22 +49,8 @@ def diseasecourse():        # sets course of disease    # L=leicht, M=Mittel, S=
     elif hv == 2:
         return "S"
 
-def scenario(m,k,p):
-    #for testing no set t = 70                          # simulation period (days) -> change it to something more sensible
-    N = 5000                        # populationsize
-    m                         # ill people on day 1
-    p                         # infection rate
-    mr = 0.05                       # mortality rate
-    x = 5                           # quarantine after x days
-    pCD = [80/100, 15/100, 5/100]   # probability vector to set course of disease
-
-    output_directory = "documentation_tables"
-    if not os.path.exists(output_directory) or not output_directory in os.listdir():
-        os.mkdir(output_directory)
-
-    adMatrix = np.load('adMatrix_k'+str(k)+'.npy')      # loads adMatrix      
-
-       
+def scenario(k,m,p):
+    adMatrix = np.load('adMatrix_k'+str(k)+'.npy')      # loads adMatrix   
     data = pd.DataFrame({       
                          "ID" : np.arange(N),   
                          "stati" : np.chararray(N),             # healthstatus, H=Health D=Disease T=Death R=Resistant
@@ -56,7 +64,7 @@ def scenario(m,k,p):
     # choose m ill people on day 1 randomly
     index = np.random.choice(N, m)
     data.loc[index, "stati"] = 'D'
-    data.loc[index, "dur"] = [np.random.randint(10, 16) for i in index]     # sets predicted illness duration of ill people on day 1 
+    data.loc[index, "dur"] = [np.random.randint(tmin, tmax) for i in index]     # sets predicted illness duration of ill people on day 1 
     data.loc[index, "CD"] = [diseasecourse() for i in index]                # sets disease course of ill people on day 1
 
 
@@ -122,37 +130,49 @@ def scenario(m,k,p):
     filename_permutation = filename_permutation.replace('m1_','m01_').replace('m5_','m05_').replace('k5_','k05_')
     savestring = output_directory+'/'+filename_permutation # Compatibility with backslash?
     documentation.to_csv(savestring)
-    print('Simulation for the scenario completed and saved at: ' + savestring)
+    sys.stdout.write(f'\rSimulation for the scenario completed and saved at: {savestring} \n') #\r to let the loading icon vanish from that line
 
-##### FOR TESTING, SET t
-t = input('Set t')
-
-print('Do You wish to run a specific scenario [enter] or calculate all possible 27 scenarios ?') 
-print('For the latter, please put in: \n -the desired people that start out infected - m = (1, 5, 10)\n -the contacts per person - k = (5, 10, 20)\n -the probability of transmission per contact and day - p = (.10, .25, .50):')
-print('m, k, p')
+print('Calculate all possible 27 scenarios by putting [any], or do you wish to run a specific scenario? ') 
+print('For the latter, please put in: \n -the continued contacts per person -                              k = (5, 10, 20)\
+                                      \n -the number of persons that start out infected -                  m = (1, 5, 10)\
+                                      \n -the probability of transmission per contact and day in percent - p = (10, 25, 50):')
 try:
-    inp = input('(m, k, p)')
-    m, k, p = tuple(int(x) for x in inp.split(","))
-    print(f'You chose in m={m}, k={k} and p={p}')
-    scenario(m,k,p)
+    inp = input('k, m, p = ')
+    k,m,p = tuple(int(x) for x in inp.split(","))
+    p = p/100
+    print(f'You chose k={k}, m={m} and p={p}')
+    if not (k in [5,10,20]):
+        print('k needs to be a value that has a pre-calculated adMatrix_k*.npy, that is in {5;10;20}')
+        raise ValueError()
+    else:
+        #loading animation        
+        done = False 
+        thread = threading.Thread(target=loadingicon)
+        thread.start() #concurrent running
+        
+        scenario(k,m,p)
+        done = True
 except:
-    print('All scenarios are being looped')
-    print('Expected runtime: 11min - matthias@matthias')
+    print('*'*60)
+    print('Now all scenarios are being looped')
+    print('*'*60)
     print('Start at:',datetime.datetime.now())
-    t = threading.Thread(target=loadingicon)
-    t.start() #laoding animation 
+    
     # Create all permutations manually:
     P = []
-    for k in k_l:
-        for m in m_l:
-            for p in p_l:
+    for k in [5,10,20]:
+        for m in [1,5,10]:
+            for p in [0.10,0.25,0.50]:
                 P.append((k,m,p))
-                
+      
     for k,m,p in P:
-        scenario(m,k,p)
-    done = True
+        #loading animation
+        done = False 
+        thread = threading.Thread(target=loadingicon)
+        thread.start()
+        
+        scenario(k,m,p)
+        done = True
     
     print('Fin.  at:', datetime.datetime.now())
-    print('Simulation for all', len(P), 'scenarios completed!\nSaved at '+output_directory)
-
-
+    print('Simulation for all', len(P), 'scenarios completed!\nSaved in '+output_directory)
