@@ -1,3 +1,4 @@
+#this file should be on master branch, with Step01,02 and Readme and besprechung on MatBranch2
 '''
 This script loads the .csv's from documentation_tables/, combines them into a single dataframe.
 Some graphics are then generated to compare the scenarios and different interesting developments.
@@ -34,9 +35,9 @@ import datetime
 #import glob
 import matplotlib.pyplot as plt
 
-output_directory = "graphics"
-if not os.path.exists(output_directory) or not output_directory in os.listdir():
-    os.mkdir(output_directory) 
+graphics = "graphics/"
+if not (os.path.exists(graphics) or graphics in os.listdir()):
+    os.mkdir(graphics) 
 
 # prepare a number for log_10, so that we don't get 'ugly' values under 1
 def log10(x):
@@ -47,7 +48,7 @@ def log10(x):
     else: #if x=0
         return 10 # 1 would be better, looks not good tho, and the base would look like zero
     
-print('Expected runtime: XXmin')
+#print('Expected runtime: XXmin')
 starttime = datetime.datetime.now()
 print('Start at:', starttime)
 print('-'*80)
@@ -90,11 +91,11 @@ t = max(docs.days)
 # 1 Data manipulation   #
 #######################
 
-
-
 # Some nice simulations are chosen:
 docm05 = docs[docs.m==5]
-file = files[4] #random, choose later on a 'nice' one: k5, m1, p10
+#################################################################
+file = files[25] #arbitrarely chosen scenario with a nice development
+################################################################
 doc = pd.read_csv('documentation_tables/' + file , index_col=0)
 
 #for it to work in a single graph, one probably needs k and p as factors not doubles
@@ -112,9 +113,9 @@ for i in np.arange(len(doc)-1)+1:
     R_nw.append(doc.loc[i,"R"]-doc.loc[i-1,"R"])
     T_nw.append(doc.loc[i,"T"]-doc.loc[i-1,"T"])
     
-doc_change = pd.DataFrame({'H': doc.loc[1:38,'H'], #normally 25 -> bug
-                           'D': doc.loc[1:38,"D"],
-                           'G': np.add(doc.loc[1:38,"H"],doc.loc[1:38,"R"]), #Genesene+Healthy
+doc_change = pd.DataFrame({'H': doc.loc[1:t,'H'],
+                           'D': doc.loc[1:t,"D"],
+                           'G': np.add(doc.loc[1:t,"H"],doc.loc[1:t,"R"]), #Genesene+Healthy
                            'D_change': D_chng, 
                            'D_new' :D_nw,
                            'D_new_c': np.add(np.add(R_nw,T_nw),D_nw),
@@ -122,8 +123,8 @@ doc_change = pd.DataFrame({'H': doc.loc[1:38,'H'], #normally 25 -> bug
                            'R_new':R_nw,
                            'R_new_c':np.add(R_nw,T_nw),
                            'R_new_neg': np.negative(R_nw),
-                           'days':doc.loc[1:38,'days'], 
-                           'T':doc.loc[1:38,"T"],
+                           'days':doc.loc[1:t,'days'], 
+                           'T':doc.loc[1:t,"T"],
                            'T_new':np.multiply(-1, T_nw),
                            'T_new_pos':T_nw,
                            'T_new_log': (np.log10(list(map(log10, T_nw)))),
@@ -145,20 +146,36 @@ doc_logDT = pd.DataFrame((doc['days'], doc_logT, doc_logD)).T
 # 2 Plotting    #
 ################
 
-# facet über p, k, m fix 5
+
+# units for saving
+w=15; h=10; u='cm'
+
 g = ggplot(docm05, aes(x='days'))
-g + geom_line(aes(y='T'))  + facet_grid(('k','p')) #in R not a tuple but ~
+
+# facet über p, k, m fix 5
+ggsave(filename = graphics + 'pkm_facet.png', width=w, height=h, units=u, plot=
+       g + geom_line(aes(y='T'))  + facet_grid(('k','p')) #in R not a tuple but ~
+      )
 # interesting: for (20,50) there's less deads in total than vor (10,25)
 
 
 # line-graphs, die die totalen Infizierten über verschiedenen p,k vergleichen
-g + geom_point(aes(y=docm05.D, fill='p', size='k'))
-g + geom_line(aes(y='D', color='k', fill='k')) + facet_wrap(('p','k'))
+'''
+ggsave(filename = graphics + 'point_pk.png', width=w, height=h, units=u, plot=
+        g + geom_point(aes(y=docm05.D, fill='p', size='k'))
+      )
+'''
+ggsave(filename = graphics + 'line_pk.png', width=w, height=h, units=u, plot=
+        g + geom_line(aes(y='D', color='k', fill='k')) + facet_wrap(('p','k'))
+      )
 
-g_int = ggplot(doc_interest, aes(x='days',y='D')) 
-g_int + geom_line(aes(colour='k')) + scale_y_log10() + facet_wrap('p')
-
-g_int + geom_line(aes(colour='k',linetype="p")) + scale_y_log10()
+g_int = ggplot(doc_interest, aes(x='days',y='D'))
+ggsave(filename = graphics + 'line_pk-logfacet.png', width=w, height=h, units=u, plot=
+        g_int + geom_line(aes(colour='k')) + scale_y_log10() + facet_wrap('p')
+      )
+ggsave(filename = graphics + 'line_pk-log.png', width=w, height=h, units=u, plot=
+        g_int + geom_line(aes(colour='k',linetype="p")) + scale_y_log10()
+      )
 #g_int + geom_point(aes(colour='k',shape="p")) 
 
 '''
@@ -177,52 +194,63 @@ docm05wide = docm05.pivot(columns='p')
 
 
 # Zeit vs Anzahl HDTR
-ggplot(doc, aes(x='days'))   + geom_line(aes(y='H')) \
-                             + geom_line(aes(y="D")) \
-                             + geom_line(aes(y="T")) \
-                             + geom_line(aes(y="R")) 
+ggsave(filename = graphics + 'time_line.png', width=w, height=h, units=u, plot=
+        ggplot(doc, aes(x='days'))\
+            + geom_line(aes(y='H')) \
+            + geom_line(aes(y="D")) \
+            + geom_line(aes(y="T")) \
+            + geom_line(aes(y="R")) 
+      )
 
 # Zeit vs Anzahl -> transparent überlappendes Säulendiagramm
-ggplot(doc, aes(x= "days")) \
+ggsave(filename = graphics + 'time_line-col.png', width=w, height=h, units=u, plot=
+        ggplot(doc, aes(x= "days")) \
             + geom_col(aes(y='H',fill=0),position='stack',alpha=0.5) \
             + geom_col(aes(y="D",fill=1),position='stack',alpha=0.5) \
             + geom_col(aes(y="R",fill=2),position='stack',alpha=0.5) \
             + geom_col(aes(y="T",fill=3),position='stack',alpha=0.5)
-
+      )
 # "gestacktes" Säulendiagramm, sodass gut die Verhältnisse sichtbar sind
-ggplot(doc_c, aes(x= "days")) \
-    + geom_col(aes(y="T",fill=3),position='stack') \
-    + geom_col(aes(y="R",fill=2),position='stack') \
-    + geom_col(aes(y="D",fill=1),position='stack') \
-    + geom_col(aes(y='H',fill=0),position='stack') 
-            
-ggplot(doc_logDT, aes(x='days'))   + geom_line(aes(y="D")) \
-                             + geom_line(aes(y="T"))
-
-ggplot(doc_change, aes(x='days'))  \
-    + geom_col(aes(y="cumT"),fill='red',width=.6) \
-    + geom_col(aes(y="D_new",alpha=.5)) \
-    + geom_col(aes(y="R_new",width=.6)) \
-    + geom_line(aes(y='G'))
-    #+ geom_line(aes(y="D_change"))
-    #+ geom_col(aes(y="D_change", col='sgR_new')) #<-könnte später interessant werden, wenn in Simulationen die Ansteckungsraten langsamer sind, also sich D ändert, weil Leute sterben (-), genesen (-) und sich anstecken (+) 
-
-    #+ geom_line(aes(y="G",fill='3')) \
+ggsave(filename = graphics + 'time_line-colstacked.png', width=w, height=h, units=u, plot=
+        ggplot(doc_c, aes(x= "days")) \
+            + geom_col(aes(y="T",fill=3),position='stack') \
+            + geom_col(aes(y="R",fill=2),position='stack') \
+            + geom_col(aes(y="D",fill=1),position='stack') \
+            + geom_col(aes(y='H',fill=0),position='stack') 
+        )
+ggsave(filename = graphics + 'time_line_linesimple.png', width=w, height=h, units=u, plot=            
+        ggplot(doc_logDT, aes(x='days'))\
+            + geom_line(aes(y="D")) \
+            + geom_line(aes(y="T"))
+      )
+ggsave(filename = graphics + 'time_line_colchange', width=w, height=h, units=u, plot=
+        ggplot(doc_change, aes(x='days'))  \
+            + geom_col(aes(y="cumT"),fill='red',width=.6) \
+            + geom_col(aes(y="D_new",alpha=.5)) \
+            + geom_col(aes(y="R_new",width=.6)) \
+            + geom_line(aes(y='G'))
+            #+ geom_line(aes(y="D_change"))
+            #+ geom_col(aes(y="D_change", col='sgR_new')) #<-könnte später interessant werden, wenn in Simulationen die Ansteckungsraten langsamer sind, also sich D ändert, weil Leute sterben (-), genesen (-) und sich anstecken (+) 
+   #+ geom_line(aes(y="G",fill='3')) \
     #+ geom_line(aes(y="H")) \
-ggplot(doc_change, aes(x='days'))  \
-    + geom_col(aes(y="D_new_c", fill= 1), width=0.4) \
-    + geom_col(aes(y='R_new_c', fill=2), width=0.4) \
-    + scale_y_log10() \
-    + geom_col(aes(y='T_new_log'),fill='red', width=0.4)
-
-ggplot(doc_change, aes(x='days'))  \
-    + geom_col(aes(y="D_new_c", fill= 1), width=0.4) \
-    + geom_col(aes(y='R_new_c', fill=2), width=0.4) \
-    + geom_point(aes(y='G'),fill='w') \
-    + geom_col(aes(y='T_new_pos'),fill='red', width=0.4)
-
+       )
+ggsave(filename = graphics + 'dunnowhat1.png', width=w, height=h, units=u, plot=
+        ggplot(doc_change, aes(x='days'))  \
+            + geom_col(aes(y="D_new_c", fill= 1), width=0.4) \
+            + geom_col(aes(y='R_new_c', fill=2), width=0.4) \
+            + scale_y_log10() \
+            + geom_col(aes(y='T_new_log'),fill='red', width=0.4)
+        )
+ggsave(filename = graphics + 'dunnowhat2.png', width=w, height=h, units=u, plot=
+        ggplot(doc_change, aes(x='days'))  \
+            + geom_col(aes(y="D_new_c", fill= 1), width=0.4) \
+            + geom_col(aes(y='R_new_c', fill=2), width=0.4) \
+            + geom_point(aes(y='G'),fill='w') \
+            + geom_col(aes(y='T_new_pos'),fill='red', width=0.4)
+        )
+#puts out errors: log10 divided by 0, removing missing values
 print('-'*80)
-    print('Start at:', starttime)
-    print('Fin.  at:', datetime.datetime.now())
-    print('Graphics are saved at in folder %s' %output_directory)
-    print("Done")
+print('Start at:', starttime)
+print('Fin.  at:', datetime.datetime.now())
+print('Graphics are saved at in folder %s' %graphics)
+print("Done")
