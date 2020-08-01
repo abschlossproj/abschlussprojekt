@@ -19,7 +19,7 @@ import time #loading animation
 #t = int(input('Set t'))
 
 # Global variables
-t = 105                         # simulation period (days) -> with 105 for every k,m,p all changes documented
+t = 110                         # simulation period (days) -> with 105 not yet all changes documented
 N = 5000                        # populationsize from Step01
 mr = 0.05                       # mortality rate
 x = 5                           # quarantine after x days

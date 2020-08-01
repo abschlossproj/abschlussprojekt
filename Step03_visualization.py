@@ -7,28 +7,9 @@ To that end, some more rows are generated out of the existing ones.
 As scenarios the difference between k and p seems most interesting, so m is fixed mostly at 5.
 To make only a single nice graphic, one scenario is chosen at random (the first or fourth one)
 The graphics are saved to graphics/
-
-
-To-do: Legende, Titel, Theme, Farben, Beschriftung
-To-do: Abspeichern
-to-do: mehrere m's mit layout abspeichern
-
-to-do: dfs now also with more rows iso and levels S,M,L
-
-geom_line häufig problematisch, wenn es statt vieler lines nur eine ausspuckt, die alles verscuht zu kombinieren -> geom_line(aes(group = Subject ))
-
-of interest: differnce between iso and without iso?
-capacity when too much severe cases
-
-docs[docs.days==105] -> there are still D!!!! 105 not long enough!!!!! -> make it dynamically, espec. if there's an upcoming diff between with quarantine and w/o???
-
-give some countries 'names' and characters, e.g. commonwealth, with a secluded AUS, a herd-immunity GBR and mixture of IRA. Then compare, and aggravate the cases.
-
-https://www.nzz.ch/panorama/coronavirus-neuste-fallzahlen-in-der-schweiz-und-weltweit-ld.1542774?reduced=true
-oder siehe screenshot zib - instagramm
 '''
 
-from plotnine import ggplot, aes, geom_line, geom_col, facet_grid,  scale_y_log10, geom_point, facet_wrap, geom_step, geom_boxplot, facet_wrap, geom_crossbar, coord_cartesian, coord_flip, geom_bar, ggsave, geom_tile, geom_smooth, geom_segment, geom_text, geom_hline, theme_bw, ylim, labs, scale_color_gradient, theme_set
+from plotnine import ggplot, aes, geom_line, geom_col, facet_grid,  scale_y_log10, geom_point, facet_wrap, geom_step, geom_boxplot, facet_wrap, geom_crossbar, coord_cartesian, coord_flip, geom_bar, ggsave, geom_tile, geom_smooth, geom_segment, geom_text, geom_hline, theme_bw, ylim, labs, scale_color_gradient, theme_set, theme, scale_color_discrete, theme_void, theme_linedraw, theme_classic, xlim, themes, element_rect, scale_colour_manual, element_text, element_line, geom_text, annotate
 
 import pandas as pd
 import numpy as np
@@ -58,25 +39,12 @@ print('Start at:', starttime)
 print('-'*80)
 print('graphics are being generated... Do not press any key...')
 print('-'*80)
-'''
 
-########### P copied from simul Script :/ -> is it even used?
-k_l=[5,10,20]         # number of contacts, only relevant for saved adMatrix from that script
-m_l = [1,5,10]        # ill people on day 1
-p_l = [.1,.25,.5]     # infection rate
-P = []
-for k in k_l:
-    for m in m_l:
-        for p in p_l:
-            P.append((k,m,p))
-############
 
-'''
 files = os.listdir('documentation_tables') #lists all csv generated in simul script
 docs = pd.DataFrame()
 
 # combine all the tables into one dataframe 'docs'
-
 #i=1
 for x, y in enumerate(files):
     df = pd.read_csv(('documentation_tables' + '/' + files[x]), index_col=0) # Compatibility issues?
@@ -92,8 +60,10 @@ for x, y in enumerate(files):
     #if i>1:
     #    break
 
-
 t = max(docs.days)
+#docs[docs.days==t] #-> there are still D!!!! 105 not long enough!!!!! -> make it dynamically, espec. if there's an upcoming diff between with quarantine and w/o???
+#also change colors etc?
+
 
 ########################
 # 1 Data manipulation   #
@@ -138,7 +108,7 @@ doc_change = pd.DataFrame({'H': doc.loc[1:t,'H'],
                            'T_new_log': (np.log10(list(map(log10, T_nw)))),
                            'cumT':np.add(R_nw,T_nw)}) 
 
-#cumsums
+#cumsums -> makes overlapping possible, doc_c['T'] (not doc_c.T) actually is always 5000
 doc_c = doc.copy()
 doc_c['D'] = doc_c['D']+doc_c['H']
 doc_c['R'] = doc_c['R']+doc_c['D']
@@ -147,22 +117,37 @@ doc_c['T'] = doc_c['T']+doc_c['R']
 # logaithmierte D und T
 doc_logT = doc['T'].apply(lambda x: math.log(log10(x),10)) #sehr langsam :/
 doc_logD = doc['D'].apply(lambda x: math.log(log10(x),10)) # -> np.log(x) (geht auch mit df/ser?!)
-doc_logDT = pd.DataFrame((doc['days'], doc_logT, doc_logD)).T
+doc_logIso = doc.Iso.apply(lambda x: math.log(log10(x),10))
+doc_logDT = pd.DataFrame((doc['days'], doc_logT, doc_logD, doc_logIso)).T
 
 
 #################
 # 2 Plotting    #
 ################
 
-
+       
 # units for saving
-w=15; h=10; u='cm'
+w=15; h=10; u='cm'; dpi=300
+
+# Mimicking the ZIB Plots on Instagramm
+ggsave(filename = graphics + 'ZIB-like.png', width=w, height=w, units=u, dpi=dpi, plot=
+        ggplot(doc_change, aes(x= "days", y='D_new')) \
+            + geom_col(fill='white', width=.8) + geom_smooth(color='yellow', size=1.5)\
+            + labs(title='XYZ Virus in Scenario ABC:\n Tägliche Neuinfektionen', y='')\
+            + theme_classic()\
+            + theme( rect=element_rect(color='#0072B2', size=0, fill='#0072B2'),\
+                     axis_text = element_text(colour = 'white'), axis_title = element_text(colour = 'white'), \
+                     axis_line = element_line(color='white'), plot_title = element_text(colour = 'white'))\
+            + xlim(20,55) + ylim(0,180)
+      )#value in R as c(), axis.title
+
 
 g = ggplot(docm05, aes(x='days'))
 
 # facet über p, k, m fix 5
-ggsave(filename = graphics + 'pkm_facet.png', width=w, height=h, units=u, plot=
-       g + geom_line(aes(y='T'))  + facet_grid(('k','p')) #in R not a tuple but ~
+ggsave(filename = graphics + 'pkm_facet.png', width=w, height=h, units=u, dpi=dpi, plot=
+       g + geom_line(aes(y='T'))  + labs(title='Herding immunity works, \nHygiene and Distancing is better', y='virus fatalities')\
+       + facet_grid(('k','p'), labeller='label_both') #in R not a tuple but ~
       )
 # interesting: for (20,50) there's less deads in total than vor (10,25)
 
@@ -173,16 +158,20 @@ ggsave(filename = graphics + 'point_pk.png', width=w, height=h, units=u, plot=
         g + geom_point(aes(y=docm05.D, fill='p', size='k'))
       )
 '''
-ggsave(filename = graphics + 'line_pk.png', width=w, height=h, units=u, plot=
-        g + geom_line(aes(y='D', color='k', fill='k')) + facet_wrap(('p','k'))
+ggsave(filename = graphics + 'line_pk.png', width=w, height=1.5*h, units=u, dpi=dpi, plot=
+        g + geom_line(aes(y='D', color='k', fill='k')) + facet_wrap(('p','k'), labeller='label_both')\
+          + labs(y='infected persons', title='Only the strictest measures flatten the curve') + scale_color_gradient(guide=False) + theme_void()
       )
 
 g_int = ggplot(doc_interest, aes(x='days',y='D'))
-ggsave(filename = graphics + 'line_pk-logfacet.png', width=w, height=h, units=u, plot=
+'''
+ggsave(filename = graphics + 'line_pk-logfacet.png', width=w, height=h, units=u, dpi=dpi, plot=
         g_int + geom_line(aes(colour='k')) + scale_y_log10() + facet_wrap('p')
       )
-ggsave(filename = graphics + 'line_pk-log.png', width=w, height=h, units=u, plot=
-        g_int + geom_line(aes(colour='k',linetype="p")) + scale_y_log10()
+'''
+ggsave(filename = graphics + 'line_pk-log.png', width=w, height=h, units=u, dpi=dpi, plot=
+        g_int + geom_line(aes(colour='k',linetype="p")) + scale_y_log10()\
+              + labs(y='Infected persons', title='Cases for some scenarios from \'day zero\'') + theme_linedraw()
       )
 
 #g_int + geom_point(aes(colour='k',shape="p")) 
@@ -203,38 +192,53 @@ docm05wide = docm05.pivot(columns='p')
 
 
 # Zeit vs Anzahl HDTR
-ggsave(filename = graphics + 'time_line.png', width=w, height=h, units=u, plot=
+'''
+ggsave(filename = graphics + 'time_line.png', width=w, height=h, units=u, dpi=dpi, plot=
         ggplot(doc, aes(x='days'))\
             + geom_line(aes(y='H')) \
             + geom_line(aes(y="D")) \
             + geom_line(aes(y="T")) \
             + geom_line(aes(y="R")) 
       )
+'''
 
 # Zeit vs Anzahl -> transparent überlappendes Säulendiagramm
-ggsave(filename = graphics + 'time_line-col.png', width=w, height=h, units=u, plot=
-        ggplot(doc, aes(x= "days")) \
-
-            + geom_col(aes(y='H',fill=0),position='stack',alpha=0.5) \
-            + geom_col(aes(y="D",fill=1),position='stack',alpha=0.5) \
-            + geom_col(aes(y="R",fill=2),position='stack',alpha=0.5) \
-            + geom_col(aes(y="T",fill=3),position='stack',alpha=0.5)
-
+g_col = ggplot(doc, aes(x= "days")) \
+            + geom_line(aes(y='H'),color='#203910',position='stack',alpha=0.4) \
+            + geom_line(aes(y="D"),color='purple',position='stack',alpha=0.4) \
+            + geom_line(aes(y="R"),color='#4101a2',position='stack',alpha=0.4) \
+            + geom_line(aes(y="T"),color='#b21281',position='stack',alpha=0.4) 
+'''
+ggsave(filename = graphics + 'time_line-col.png', width=w, height=h, units=u, dpi=dpi, plot=
+        g_col + theme_bw() #+ scale_color_gradient(guide=False)
       )
+'''
+ggsave(filename = graphics + 'time_line-col-log.png', width=w, height=h, units=u, dpi=dpi, plot=
+        g_col + scale_y_log10() + theme_bw() 
+      )
+
 # "gestacktes" Säulendiagramm, sodass gut die Verhältnisse sichtbar sind
-ggsave(filename = graphics + 'time_line-colstacked.png', width=w, height=h, units=u, plot=
+ggsave(filename = graphics + 'time_line-colstacked.png', width=w, height=h, units=u, dpi=dpi, plot=
         ggplot(doc_c, aes(x= "days")) \
-            + geom_col(aes(y="T",fill=3),position='stack') \
-            + geom_col(aes(y="R",fill=2),position='stack') \
-            + geom_col(aes(y="D",fill=1),position='stack') \
-            + geom_col(aes(y='H',fill=0),position='stack') 
+            + geom_col(aes(y="T"),fill='red',position='stack') \
+            + geom_col(aes(y="R"),fill='green',position='stack') \
+            + geom_col(aes(y="D"),fill='yellow',position='stack') \
+            + geom_col(aes(y='H'),fill='blue',position='stack') \
+            + labs(y='', title='Ratio of populace that is infected, recovered or dead') + theme_bw() + xlim(0,80)\
+            + annotate(geom='text', x=39, y=3000,label='Infected')\
+            + annotate(geom='text', x=55, y=4000,label='Recovered')\
+            + annotate(geom='text', x=14, y=1900,label='Healthy')\
+            + annotate(geom='text', x=75, y=4850,label='Dead')
         )
-ggsave(filename = graphics + 'time_line_linesimple.png', width=w, height=h, units=u, plot=            
+ggsave(filename = graphics + 'time_line_linesimple.png', width=w, height=h, units=u, dpi=dpi, plot=            
         ggplot(doc_logDT, aes(x='days'))\
-            + geom_line(aes(y="D")) \
-            + geom_line(aes(y="T"))
+            + geom_line(aes(y="D"),color='#0072B2') \
+            + geom_line(aes(y="Iso"),color='#56B4E9') \
+            + geom_line(aes(y="T"),color='#D55E00') \
+            + labs(title='Isolating helps keeping fatalities low', y='cases and deaths, log10')
       )
-ggsave(filename = graphics + 'time_line_colchange', width=w, height=h, units=u, plot=
+'''
+ggsave(filename = graphics + 'time_line_colchange', width=w, height=h, units=u, dpi=dpi, plot=
         ggplot(doc_change, aes(x='days'))  \
             + geom_col(aes(y="cumT"),fill='red',width=.6) \
             + geom_col(aes(y="D_new",alpha=.5)) \
@@ -245,24 +249,40 @@ ggsave(filename = graphics + 'time_line_colchange', width=w, height=h, units=u, 
    #+ geom_line(aes(y="G",fill='3')) \
     #+ geom_line(aes(y="H")) \
        )
-ggsave(filename = graphics + 'dunnowhat1.png', width=w, height=h, units=u, plot=
+'''
+'''
+ggsave(filename = graphics + 'dunnowhat1.png', width=w, height=h, units=u, dpi=dpi, plot=
         ggplot(doc_change, aes(x='days'))  \
             + geom_col(aes(y="D_new_c", fill= 1), width=0.4) \
             + geom_col(aes(y='R_new_c', fill=2), width=0.4) \
             + scale_y_log10() \
             + geom_col(aes(y='T_new_log'),fill='red', width=0.4)
         )
-ggsave(filename = graphics + 'dunnowhat2.png', width=w, height=h, units=u, plot=
+'''
+ggsave(filename = graphics + 'changes.png', width=w, height=h, units=u, dpi=dpi, plot=
         ggplot(doc_change, aes(x='days'))  \
-            + geom_col(aes(y="D_new_c", fill= 1), width=0.4) \
-            + geom_col(aes(y='R_new_c', fill=2), width=0.4) \
-            + geom_point(aes(y='G'),fill='w') \
-            + geom_col(aes(y='T_new_pos'),fill='red', width=0.4)
-        )
+            + geom_col(aes(y="D_new"), position='dodge',fill= 'orange', width=0.8) \
+            + geom_col(aes(y='R_new'), position='dodge',fill='blue', width=0.8,alpha=.6) \
+            + geom_col(aes(y='T_new_pos'),fill='red', width=1)\
+            + labs(title='Daily new infected, recovered and deceased', x='', y='daily new cases') \
+            + xlim(0,80) #+ scale_y_log10()
+        )  #+ geom_point(aes(y='G'),fill='w') \
 #puts out errors: log10 divided by 0, removing missing values
 print('-'*80)
 print('Start at:', starttime)
 print('Fin.  at:', datetime.datetime.now())
-print('Graphics are saved at in folder %s' %graphics)
+print('Graphics are saved in folder %s' %graphics)
 print("Done")
 
+'''
+To-do
+geom_line häufig problematisch, wenn es statt vieler lines nur eine ausspuckt, die alles verscuht zu kombinieren -> geom_line(aes(group = Subject ))
+
+of interest: differnce between iso and without iso?
+capacity when too much severe cases
+
+give some countries 'names' and characters, e.g. commonwealth, with a secluded AUS, a herd-immunity GBR and mixture of IRA. Then compare, and aggravate the cases across scenarios.
+
+https://www.nzz.ch/panorama/coronavirus-neuste-fallzahlen-in-der-schweiz-und-weltweit-ld.1542774?reduced=true
+oder siehe screenshot zib - instagramm
+'''
