@@ -1,3 +1,4 @@
+
 #this file should be on master branch, with Step01,02 and Readme and besprechung on MatBranch2
 '''
 This script loads the .csv's from documentation_tables/, combines them into a single dataframe.
@@ -11,6 +12,7 @@ The graphics are saved to graphics/
 To-do: Legende, Titel, Theme, Farben, Beschriftung
 To-do: Abspeichern
 to-do: mehrere m's mit layout abspeichern
+
 to-do: dfs now also with more rows iso and levels S,M,L
 
 geom_line häufig problematisch, wenn es statt vieler lines nur eine ausspuckt, die alles verscuht zu kombinieren -> geom_line(aes(group = Subject ))
@@ -27,10 +29,12 @@ oder siehe screenshot zib - instagramm
 '''
 
 from plotnine import ggplot, aes, geom_line, geom_col, facet_grid,  scale_y_log10, geom_point, facet_wrap, geom_step, geom_boxplot, facet_wrap, geom_crossbar, coord_cartesian, coord_flip, geom_bar, ggsave, geom_tile, geom_smooth, geom_segment, geom_text, geom_hline, theme_bw, ylim, labs, scale_color_gradient, theme_set
+
 import pandas as pd
 import numpy as np
 import math
 import os
+
 import datetime
 #import glob
 import matplotlib.pyplot as plt
@@ -55,6 +59,7 @@ print('-'*80)
 print('graphics are being generated... Do not press any key...')
 print('-'*80)
 '''
+
 ########### P copied from simul Script :/ -> is it even used?
 k_l=[5,10,20]         # number of contacts, only relevant for saved adMatrix from that script
 m_l = [1,5,10]        # ill people on day 1
@@ -65,11 +70,13 @@ for k in k_l:
         for p in p_l:
             P.append((k,m,p))
 ############
+
 '''
 files = os.listdir('documentation_tables') #lists all csv generated in simul script
 docs = pd.DataFrame()
 
 # combine all the tables into one dataframe 'docs'
+
 #i=1
 for x, y in enumerate(files):
     df = pd.read_csv(('documentation_tables' + '/' + files[x]), index_col=0) # Compatibility issues?
@@ -85,6 +92,7 @@ for x, y in enumerate(files):
     #if i>1:
     #    break
 
+
 t = max(docs.days)
 
 ########################
@@ -98,12 +106,12 @@ file = files[25] #arbitrarely chosen scenario with a nice development
 ################################################################
 doc = pd.read_csv('documentation_tables/' + file , index_col=0)
 
+
 #for it to work in a single graph, one probably needs k and p as factors not doubles
 docm05_cp = docm05.copy()
 docm05_cp['k'] = docm05.k.astype(str)
 docm05_cp['p'] = docm05.p.astype(str)
 doc_interest = docm05_cp[docm05_cp['days']<10]
-
 
 # tägliche Neuinfektionen, vs Veränderung Infizierter vs Tote
 D_chng = []; D_nw = []; R_nw = []; T_nw = []
@@ -176,6 +184,7 @@ ggsave(filename = graphics + 'line_pk-logfacet.png', width=w, height=h, units=u,
 ggsave(filename = graphics + 'line_pk-log.png', width=w, height=h, units=u, plot=
         g_int + geom_line(aes(colour='k',linetype="p")) + scale_y_log10()
       )
+
 #g_int + geom_point(aes(colour='k',shape="p")) 
 
 '''
@@ -205,10 +214,12 @@ ggsave(filename = graphics + 'time_line.png', width=w, height=h, units=u, plot=
 # Zeit vs Anzahl -> transparent überlappendes Säulendiagramm
 ggsave(filename = graphics + 'time_line-col.png', width=w, height=h, units=u, plot=
         ggplot(doc, aes(x= "days")) \
+
             + geom_col(aes(y='H',fill=0),position='stack',alpha=0.5) \
             + geom_col(aes(y="D",fill=1),position='stack',alpha=0.5) \
             + geom_col(aes(y="R",fill=2),position='stack',alpha=0.5) \
             + geom_col(aes(y="T",fill=3),position='stack',alpha=0.5)
+
       )
 # "gestacktes" Säulendiagramm, sodass gut die Verhältnisse sichtbar sind
 ggsave(filename = graphics + 'time_line-colstacked.png', width=w, height=h, units=u, plot=
@@ -254,3 +265,4 @@ print('Start at:', starttime)
 print('Fin.  at:', datetime.datetime.now())
 print('Graphics are saved at in folder %s' %graphics)
 print("Done")
+
