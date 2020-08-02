@@ -1,44 +1,14 @@
-20200706_Besprechung.txt
-Meeting 06.07.2020 -- Abschlussprojekt Computational Statistics
-
-
 # Terminvorschlag Abschlussgespräch beantwortet:
 
-24.08.2020 - Ort/Zeit tba
+24.08.2020 - 14:30
+17.08 spätestens Abgabe
 
-
-# grober Zeitplan:
-
-zuerst python, dann das in R übersetzen
-
-
-# Aufgabenverteilung
-
-| to-do                         | python  | R                                             |
-+-------------------------------+---------+-----------------------------------------------+
-| Github                        |                    Robin als Experte                    |
-+-------------------------------+---------+-----------------------------------------------+
-| adj. Matrix                   | Mat/Man | Robin                                         |
-+-------------------------------+---------+-----------------------------------------------+
-| Krankheitsverlauf             | Mat/Man | Robin                                         |
-+-------------------------------+---------+-----------------------------------------------+
-| Visualisierung                | Mat/Man | ggplot2 sollte in R wie python funktionieren! |
-+-------------------------------+---------+-----------------------------------------------+
-| Dokumentation:                |         |                                               |
-| Matrixen/Bilder exportieren   |         |                                               |
-| Kommentieren                  |         |                                               |
-| Project-report -> als .md/.nb |         |                                               |
-+-------------------------------+---------+-----------------------------------------------+
 
 20200731_To-dos
-tryADM Skript aktualisieren, sodass adMatrix_k{k}.npy files ausgespuckt werden
-Readme für die Abgabe erstellen
-alle Branches und alten skripte verwerfen
 Robin macht in neuem repo mit R weiter
-Matthias adaptiert simul_zusatz_2.py für die verschiedenen Szenarien
-Matthias macht visualization.py/.R
 
 Idee: am Ende einfach alle in ein Skript einfügen, mit input('Press Enter to go to the next Step ***description of step***')
 Idee: zumindest noch eine Grafik, die 'Course' anzeigt, also L,M,S
 Idee: adMatrix_k*.npy in Unterordner verstecken
 Idee: time_line-col-log.png ausarbeiten: statt H und R nur G, statt D nur schwere Cases, fictive Linien, die Quarantänebegin und Bettenkapazität anzeigen
+Idee: line_pk-log.png einmal mit, einmal ohne log
