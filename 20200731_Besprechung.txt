@@ -41,4 +41,4 @@ Matthias macht visualization.py/.R
 Idee: am Ende einfach alle in ein Skript einfügen, mit input('Press Enter to go to the next Step ***description of step***')
 Idee: zumindest noch eine Grafik, die 'Course' anzeigt, also L,M,S
 Idee: adMatrix_k*.npy in Unterordner verstecken
-
+Idee: time_line-col-log.png ausarbeiten: statt H und R nur G, statt D nur schwere Cases, fictive Linien, die Quarantänebegin und Bettenkapazität anzeigen
