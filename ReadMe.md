@@ -22,9 +22,9 @@ and the following variables:
 ```
 t = 120                         # simulation period (days) -> with 105 for every k,m,p all changes for everyscenario documented
 N = 5000                        # populationsize from Step01
-mr = 0.05                       # mortality rate
+mr = 2/3                        # mortality rate of the patients with course of disease S; this leads (with the numbers of the pCD vector) approximately to the mortality rate of                                 # Austria
 x = 5                           # quarantine after x days
-pCD = [80/100, 15/100, 5/100]   # probability vector to set course of disease to either L, M or S
+pCD = [80/100, 15/100, 5/100]   # probability vector to set course of disease to either L, M or S; these values are oriented towards a publication of the Robert_koch-Institut
 tmin=10; tmax=16                # the duration of sickness is uniformely distributed between these two values
 ```
 The script then puts out tables documenting the fictious course of a virus in the population.
