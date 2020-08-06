@@ -12,3 +12,10 @@ Idee: zumindest noch eine Grafik, die 'Course' anzeigt, also L,M,S
 Idee: adMatrix_k*.npy in Unterordner verstecken
 Idee: time_line-col-log.png ausarbeiten: statt H und R nur G, statt D nur schwere Cases, fictive Linien, die Quarantänebegin und Bettenkapazität anzeigen
 Idee: line_pk-log.png einmal mit, einmal ohne log
+
+scale_fill_manual -> 
+https://plotnine.readthedocs.io/en/stable/generated/plotnine.scales.scale_fill_manual.html
+-> damit bei einigen Plots Legenden hinzufügen, falls das geht?
+
+Manuel hat in seinem Branch mr hochgesetzt, dafür sterben nur Intensivkranke -> graphisch umsetzen, zumindest in den master einpflegen
+Branch manuel hat neues ReadMe, die beiden simul Skripte noch mergen
