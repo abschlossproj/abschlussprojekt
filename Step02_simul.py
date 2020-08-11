@@ -113,7 +113,7 @@ def scenario(k,m,p):
                     newInf.append(j)  
                     
         data.loc[newInf, "stati"] = 'D'     # status update new infections
-        data.loc[newInf, "dur"] = [np.random.randint(10, 16) for i in newInf]   # sets predicted illness duration of new infections
+        data.loc[newInf, "dur"] = [np.random.randint(tmin, tmax) for i in newInf]   # sets predicted illness duration of new infections
         data.loc[newInf, "CD"] = [diseasecourse() for i in newInf]              # sets course of illness of new infections
         
         # update the documentation
