@@ -33,3 +33,11 @@ Python: If not specified otherwise by the user, the script will put out 27 table
 ### Step03* 
 Uses and modifies those tables giving as output enlightening graphics.
 Python: Here are also some more values imputed from the given tables, e.g. the newly infected, the change in infected overall and the dead per day.
+
+![example output](/graphics/ZIB-like.png)
+
+The plots are inspired by the Grammar of Graphics [^1], so both Outputs for the respective programming languages look alike.
+
+[^1]: Wickham, Hadley. “A Layered Grammar of Graphics.” Journal of Computational and Graphical Statistics 19, no. 1 (January 2010): 3–28. https://doi.org/10.1198/jcgs.2009.07098.
+
+
