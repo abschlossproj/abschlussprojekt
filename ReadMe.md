@@ -1,5 +1,7 @@
-This repository contains the 
+This repository contains the python scripts and outputs of
 # Uebung 4 of 040971 UK Computational Statistics 
+
+You may find the version ported to R [here](https://github.com/abschlossproj/Abschluss-in-R)
 ***
 University Vienna under Prof. Hudec and Dr. Sauerzopf
 
