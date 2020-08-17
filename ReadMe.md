@@ -1,8 +1,10 @@
 This repository contains the python scripts and outputs of
 # Uebung 4 of 040971 UK Computational Statistics 
 
-You may find the version ported to R [here](https://github.com/abschlossproj/Abschluss-in-R)
+You may find the version **ported to R [here](https://github.com/abschlossproj/Abschluss-in-R)**
 ***
+24.08.2020
+
 University Vienna under Prof. Hudec and Dr. Sauerzopf
 
 It is a joint work of:
@@ -10,15 +12,15 @@ It is a joint work of:
 + Manuel Schuller
 + Matthias Lang
 ***
-There are three scripts to be run respectively in R or python:
+The task is split up into three parts:
 
-### Step01* 
+### Step 1
 Creates a 5000x5000 matrix, with an empty diagonal.
 There are randomly distributed 1's in it, so that each row counts k of them.
-Python: There are matrices saved in .npy format for k=[5,10,20]. It may be that for some of the last rows there are one or two '1' too few, as with the implemented algorithm there's no solution for these cases.
-This matrix gets than saved to the directory the script is run in.
+There are matrices for k=[5,10,20]. It may be that for some of the last rows there are one or two '1' too few, as with the implemented algorithm there's no solution for these cases.
+This matrix gets than saved to the directory the script is run in, either in.npy or .rds format
 
-### Step02* 
+### Step 2
 Uses this matrix, some m and p, meaning the number of patient zeros and the probability of infection per contact per day,
 and the following variables:
 ```
@@ -32,13 +34,18 @@ tmin=10; tmax=16                # the duration of sickness is uniformely distrib
 The script then puts out tables documenting the fictious course of a virus in the population.
 Python: If not specified otherwise by the user, the script will put out 27 tables for 3x3x3 combinations of k, m and p. Each table than has an entry for each day showing the number of healthy, infected, recovered and dead persons, as well as how bad they got hid by the virus, whether they are in quarantine and how long they are affected by the illness.
 
-### Step03* 
-Uses and modifies those tables giving as output enlightening graphics.
-Python: Here are also some more values imputed from the given tables, e.g. the newly infected, the change in infected overall and the dead per day.
+**The additional tasks are done here, but not fully implemented:
+That means that in Step 2 the model includes the severity of the infection as well as quarantine and isolisation measures, but those are not fully represented/visualized in Step 3**
 
-![example output](/graphics/ZIB-like.png)
+### Step 3 
+Uses and modifies those tables giving, as output enlightening graphics.
+THere are also some more values imputed from the given tables, e.g. the newly infected, the change in infected overall and the dead per day.
 
-The plots are inspired by the Grammar of Graphics [^1], so both Outputs for the respective programming languages look alike.
+One example graphic is given below, the other outputs are already saved in `graphics` for ease of use.
+
+![example output](graphics/ZIB-like.png)
+
+The plots are inspired by the Grammar of Graphics [^1], using the packages plotnine and ggplot2 so both outputs for the respective programming languages look alike.
 
 [^1]: Wickham, Hadley. “A Layered Grammar of Graphics.” Journal of Computational and Graphical Statistics 19, no. 1 (January 2010): 3–28. https://doi.org/10.1198/jcgs.2009.07098.
 
