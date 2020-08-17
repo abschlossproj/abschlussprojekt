@@ -12,7 +12,7 @@ It is a joint work of:
 + Manuel Schuller
 + Matthias Lang
 ***
-The task is split up into three parts:
+Run `start.py` to run the whole simulation and generate all outputs, or each step on its own.
 
 ### Step 1
 Creates a 5000x5000 matrix, with an empty diagonal.
@@ -34,8 +34,10 @@ tmin=10; tmax=16                # the duration of sickness is uniformely distrib
 The script then puts out tables documenting the fictious course of a virus in the population.
 Python: If not specified otherwise by the user, the script will put out 27 tables for 3x3x3 combinations of k, m and p. Each table than has an entry for each day showing the number of healthy, infected, recovered and dead persons, as well as how bad they got hid by the virus, whether they are in quarantine and how long they are affected by the illness.
 
-**The additional tasks are done here, but not fully implemented:
-That means that in Step 2 the model includes the severity of the infection as well as quarantine and isolisation measures, but those are not fully represented/visualized in Step 3**
+**The additional tasks are done here, but not fully implemented:**
+That means that in Step 2 the model includes the severity of the infection as well as quarantine and isolation measures. Only a fraction of those at risk with a severe infection die. That is not fully represented/visualized in Step 3.
+
+The additional tasks are partly implemented in `Step02_simul.py`, and full in `Step02_simul_NEW.py`. The latter may not work fully with Step 3.
 
 ### Step 3 
 Uses and modifies those tables giving, as output enlightening graphics.
